@@ -1,0 +1,751 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Crafted Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  :root {
+    --bg-color: #f7f7f7ad;
+    --text-color: #333;
+    --nav-bg: #fff;
+    --nav-text: #6a0dad;
+    --nav-link-color: #555;
+    --nav-link-hover: #6a0dad;
+    --card-bg: #fff;
+    --card-shadow: rgba(0, 0, 0, 0.08);
+    --card-shadow-hover: rgba(0, 0, 0, 0.15);
+    --tag-bg: #f0e6ff;
+    --tag-color: #6a0dad;
+    --btn-ai-text: #ff0000;
+    --footer-bg: #222;
+    --footer-text: #ccc;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  body.dark-mode {
+    --bg-color: #111726;
+    --text-color: #d1d5db;
+    --nav-bg: #1F2937;
+    --nav-text: #7f5af0;
+    --nav-link-color: #8000ff;  
+    --nav-link-hover: #7f5af0;
+    --card-bg: #1f2937;
+    --card-shadow: rgba(21, 0, 255, 0.3);
+    --card-shadow-hover: rgba(21, 0, 255, 0.6);
+    --tag-bg: #7f5af0;
+    --tag-color: #fff;
+    --btn-ai-text: #e0e0ff;
+    --footer-bg: #1F2937;
+    --footer-text: #aaa;
+  }
+
+ 
+  body.dark-mode nav .links a {
+    color: var(--nav-link-color);
+  }
+
+  body.dark-mode nav .links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+#dark-mode-toggle {
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  padding: 10px 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#dark-mode-toggle:hover {
+  background-color: #7f5af0; 
+  color: #fff;
+  transform: scale(1.1); 
+}
+
+#dark-mode-toggle:focus {
+  outline: none;
+}
+
+body.dark-mode #dark-mode-toggle {
+  background-color: #333;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode #dark-mode-toggle:hover {
+  background-color: #8b5cf6;
+}
+
+
+#dark-mode-icon {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+body.dark-mode #dark-mode-icon {
+  opacity: 0; 
+  transform: rotate(180deg); 
+}
+
+body.dark-mode #dark-mode-icon.fa-sun {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+body.dark-mode #dark-mode-icon.fa-moon {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+
+nav {
+  background: var(--nav-bg);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  color: var(--nav-text);
+}
+
+nav .nav-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav .logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--nav-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+nav .links a {
+  margin-left: 1.5rem;
+  font-weight: 600;
+  color: var(--nav-link-color);
+}
+
+nav .links a:hover {
+  color: var(--nav-link-hover);
+  transition: 0.3s;
+}
+
+nav .links-container {
+  display: flex;  
+  flex-grow: 1;
+  justify-content: flex-end;  
+}
+
+nav .links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+#hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+  nav .links-container {
+    display: none; 
+  }
+
+  #hamburger {
+    display: block;  
+  }
+
+  nav .links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  nav .links a {
+    padding: 0.8rem 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--nav-link-color);
+  }
+}
+
+nav.open .links-container {
+  display: block; 
+}
+
+nav.open #hamburger {
+  display: none;  
+}
+
+nav.open .links a {
+  background-color: var(--nav-bg);
+  color: var(--nav-link-hover);
+  transition: background-color 0.3s ease;
+}
+
+#dark-mode-toggle {
+  margin-left: 1.5rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: var(--nav-text);
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+
+@media (min-width: 769px) {
+  nav .links-container {
+    display: flex; 
+  }
+  
+  #hamburger {
+    display: none;  
+  }
+  
+  nav .links {
+    display: flex;
+    gap: 0.3rem;  
+  }
+
+  nav .links a {
+    padding: 1rem;
+    font-size: 1rem;
+    color: var(--nav-link-color);
+  }
+}
+
+
+  #dark-mode-toggle {
+    margin-left: 1.5rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    color: var(--nav-text);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+  }
+
+
+  .btn-ai {
+    margin-left: 1.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    background: linear-gradient(45deg, #FFD700, #FFEC8B, #FFD700);
+    background-size: 200% 200%;
+    color: var(--btn-ai-text);
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    transition: all 0.5s ease;
+  }
+
+  .btn-ai:hover {
+    background-position: right center;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+
+ 
+header {
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 1rem;
+  position: relative; 
+  overflow: hidden;
+}
+header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  z-index: 2; 
+}
+
+header p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  z-index: 2; 
+}
+
+header .search-filter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  z-index: 2; 
+}
+
+header input,
+header select {
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+  appearance: none; 
+  -moz-appearance: none;
+  background: #fff
+    url('data:image/svg+xml;utf8,<svg fill="%236a0dad" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>')
+    no-repeat right 0.75rem center;
+  background-size: 12px;
+  padding-right: 2rem; 
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(50px, -50px) rotate(180deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(360deg);
+  }
+}
+
+
+header .floating-icons1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+
+  align-items: center;
+  padding: 1rem 2rem; 
+}
+header .floating-icons2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+
+  align-items: center;
+  padding: 1rem 2rem; 
+
+}
+
+header .floating-icons i {
+  font-size: 2rem;
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.6;
+  position: relative;
+}
+
+
+
+header .floating-icons1 .icon1 {
+  top: 10%;
+  left: 15%;
+  animation-duration: 7s;
+}
+
+header .floating-icons1 .icon2 {
+  top: 30%;
+  left: 60%;
+  animation-duration: 5s;
+}
+
+header .floating-icons1 .icon3 {
+  top: 50%;
+  left: 85%;
+  animation-duration: 6s;
+}
+
+header .floating-icons1 .icon4 {
+  top: 70%;
+  left: 25%;
+  animation-duration: 4s;
+}
+
+header .floating-icons1 .icon5 {
+  top: 80%;
+  left: 70%;
+  animation-duration: 8s;
+}
+
+header .floating-icons1 .icon6 {
+  top: 20%;
+  left: 40%;
+  animation-duration: 9s;
+}
+header .floating-icons1 i {
+  font-size: 2rem;
+  animation: float 6s ease-in-out infinite;
+  opacity: 0.6;
+  position: relative;
+}
+
+
+
+header .floating-icons2 .icon1 {
+  top: 10%;
+  right: 15%;
+  animation-duration: 7s;
+}
+
+header .floating-icons2 .icon2 {
+  top: 30%;
+  right: 60%;
+  animation-duration: 5s;
+}
+
+header .floating-icons2 .icon3 {
+  top: 50%;
+  right: 85%;
+  animation-duration: 6s;
+}
+
+header .floating-icons2 .icon4 {
+  top: 70%;
+  right: 25%;
+  animation-duration: 4s;
+}
+
+header .floating-icons2 .icon5 {
+  top: 80%;
+  right: 70%;
+  animation-duration: 8s;
+}
+
+header .floating-icons2 .icon6 {
+  top: 20%;
+  right: 40%;
+  animation-duration: 9s;
+}
+
+
+ 
+  main {
+    flex: 1;
+    max-width: 1200px;
+    margin: auto;
+    padding: 3rem 1rem;
+  }
+  .grid {
+    display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+
+    gap: 2rem;
+  }
+  @media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr; 
+  }
+}
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 25px var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 35px var(--card-shadow-hover);
+  }
+  .card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    transition: transform 0.4s ease;
+  }
+  .card:hover img {
+    transform: scale(1.05);
+  }
+  .card .card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .card .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .card .card-tags span {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .card .card-tags span:hover {
+    background: var(--nav-link-hover);
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 2px 10px rgba(106, 13, 218, 0.4);
+  }
+  .card h2 {
+    font-size: 1.4rem;
+    color: var(--nav-text);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+  .card p {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--nav-link-color);
+    line-height: 1.5;
+    color: white;
+  }
+  .card .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    color: #777;
+  }
+  .card .card-actions .like_comts {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .card .card-actions .like_comts span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 600;
+     
+   
+  }
+  .card .card-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: linear-gradient(135deg, #6a0dad, #8a2be2);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 0.6rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .card .card-actions a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(106, 13, 218, 0.5);
+  }
+
+ 
+  @media (max-width: 992px) {
+    .card img {
+      height: 160px;
+    }
+  }
+  @media (max-width: 600px) {
+    .card img {
+      height: 140px;
+    }
+  }
+
+ 
+footer {
+  background: var(--footer-bg);
+  color: var(--footer-text);
+  padding: 2rem 1rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+footer a {
+  color: var(--footer-text);
+  margin: 0 0.5rem;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+footer .footer-info {
+  margin-top: 1rem;
+}
+
+footer .footer-info p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+}
+
+footer .social-links {
+  margin-top: 1rem;
+}
+
+footer .social-links a {
+  margin: 0 10px;
+  font-size: 1.5rem; 
+}
+
+footer .social-links a:hover {
+  color: #fff;
+}
+
+footer .social-links i {
+  transition: transform 0.3s, color 0.3s;
+}
+
+footer .social-links a:hover i {
+  transform: scale(1.1);
+  color: #7f5af0;
+}
+
+
+</style>
+</head>
+<body class="dark-mode">
+<nav>
+  <div class="nav-container">
+    <div class="logo">
+      <span class="material-symbols-outlined">auto_awesome</span> Crafted
+    </div>
+    <div class="links-container">
+      <div class="links">
+        <a href="/">Home</a>
+        <a href="#" id="blog-toggle" class="active">Blogs</a>
+        <a href="#" id="project-toggle">Projects</a>
+        <a href="/write">Write</a>
+        <a href="/login" id="login-link">Login</a>
+        <a href="/logout" id="logout-link" style="display: none;">Logout</a>
+        <a href="/ai-generate" class="btn-ai">Create with AI</a>
+      </div>
+    </div>
+    <button id="dark-mode-toggle" title="Toggle Dark Mode">
+      <i id="dark-mode-icon" class="fas fa-sun"></i>
+    </button>
+    <div id="hamburger" class="hamburger">
+      <span class="material-symbols-outlined">menu</span>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="floating-icons floating-icons1">
+    <i class="fas fa-star icon1"></i>
+    <i class="fas fa-cloud icon2"></i>
+    <i class="fas fa-heart icon3"></i>
+    <i class="fas fa-moon icon4"></i>
+    <i class="fas fa-sun icon5"></i>
+    <i class="fas fa-rocket icon6"></i>
+    <i class="fa-solid fa-code"></i>
+  </div>
+  <h1>Explore Blogs & Projects</h1>
+  <p>Discover trending posts, filter by category, and create content.</p>
+  <div class="search-filter">
+    <input type="text" id="search" placeholder="Search posts..." />
+    <select id="sort-filter">
+      <option value="latest">Latest</option>
+      <option value="likes">Popular</option>
+      <option value="oldest">Trending</option>
+    </select>
+  </div>
+  <div class="floating-icons floating-icons2">
+    <i class="fas fa-star icon1"></i>
+    <i class="fas fa-cloud icon2"></i>
+    <i class="fas fa-heart icon3"></i>
+    <i class="fas fa-moon icon4"></i>
+    <i class="fas fa-sun icon5"></i>
+    <i class="fas fa-rocket icon6"></i>
+    <i class="fa-solid fa-code"></i>
+  </div>
+</header>
+
+
+
+
+  <main>
+    <div id="posts-container" class="grid"></div>
+  </main>
+
+<footer>
+  <div>
+    &copy; 2025 Crafted. All rights reserved.
+  </div>
+  <div class="footer-info">
+    <p>Developed by <strong>Bhavy Manchanda</strong></p>
+    <div class="social-links">
+      <a href="https://github.com/bhavy-Official" target="_blank" aria-label="GitHub">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.linkedin.com/in/bhavym/" target="_blank" aria-label="LinkedIn">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="https://www.instagram.com/bhavy.ig/" target="_blank" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+      </a>
+    </div>
+  </div>
+</footer>
+
+
+
+<script src="{% static 'js/home.js' %}"></script>
+
+</body>
+</html>

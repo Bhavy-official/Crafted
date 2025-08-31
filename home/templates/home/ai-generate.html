@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Blog Generator ✨ | Crafted</title>
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #111726;
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+}
+
+
+nav {
+    position: sticky;
+    top: 0;
+    background-color: #1F2937;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 50;
+}
+.nav-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+}
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+.nav-links a:hover {
+    color: #611bf8;
+}
+
+
+main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+.ai-generator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+}
+
+.ai-generator h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.ai-input-box {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+}
+
+.ai-input-box input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #333;
+    background-color: #1f2937;
+    color: white;
+    font-size: 1rem;
+}
+
+.ai-input-box button {
+    background-color: #611bf8;
+    border: none;
+    color: white;
+    padding: 0 1.5rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.ai-input-box button:hover {
+    background-color: #7d3bff;
+}
+
+
+.result-box {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.result-box h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.blog-section {
+    background-color: #1f2937;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(21, 0, 255, 0.3);
+    transition: box-shadow 0.3s;
+}
+
+.blog-section:hover {
+    box-shadow: 0 4px 12px rgba(21, 0, 255, 0.6);
+}
+
+.blog-section h3 {
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+}
+
+.blog-section p {
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.blog-section ul, .blog-section ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.blog-section li {
+    margin-bottom: 0.5rem;
+}
+
+.blog-section blockquote {
+    border-left: 4px solid #611bf8;
+    padding-left: 1rem;
+    color: #aaa;
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+.blog-section code {
+    background-color: #111726;
+    color: #7f5af0;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+
+
+.generated-blog {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: #111827;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(97, 27, 248, 0.15);
+}
+.blog-section strong {
+    color: #7f5af0;
+    font-weight: 700; 
+}
+
+.blog-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #b794f4;
+    text-align: center;
+    border-bottom: 2px solid #611bf8;
+    padding-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(97, 27, 248, 0.3);
+}
+
+
+.blog-section {
+    padding: 1rem 1.5rem;
+    background-color: #1f2937;
+    border-left: 4px solid #611bf8;
+    border-radius: 0.75rem;
+    transition: box-shadow 0.3s ease;
+}
+
+.blog-section:hover {
+    box-shadow: 0 4px 12px rgba(97, 27, 248, 0.3);
+}
+
+.blog-section h2, 
+.blog-section h3 {
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.blog-section p {
+    line-height: 1.7;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+}
+
+.blog-section ul, .blog-section ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.blog-section li {
+    margin-bottom: 0.5rem;
+}
+
+.blog-section blockquote {
+    border-left: 4px solid #611bf8;
+    padding-left: 1rem;
+    color: #ccc;
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+.blog-section code {
+    background-color: #282c34;
+    color: #f8f8f2;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+
+
+footer {
+    width: 100%;
+    background-color: #1F2937;
+    border-top: 1px solid #333;
+    color: #aaa;
+    font-size: 0.9rem;
+    padding: 1.5rem 0;
+}
+.footer-content {
+    max-width: 1200px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+.footer-nav {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.footer-nav a {
+    color: #aaa;
+    font-weight: 500;
+    text-decoration: none;
+}
+.footer-nav a:hover {
+    color: #611bf8;
+}
+
+@media(min-width:768px) {
+    .footer-content { flex-direction: row; justify-content: space-between; align-items: center;}
+}
+</style>
+</head>
+
+<body>
+
+
+<nav>
+    <div class="container nav-flex">
+        <div class="nav-logo">
+            <span class="material-symbols-outlined">auto_awesome</span> Crafted
+        </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/blogs">Blogs</a>
+            <a href="/projects">Projects</a>
+            <a href="/write">Write</a>
+        </div>
+    </div>
+</nav>
+
+
+<main class="container ai-generator">
+    <h1>Generate a Blog with AI ✨</h1>
+    <div class="ai-input-box">
+        <input type="text" id="topic" placeholder="Enter a topic e.g. Artificial Intelligence in 2025...">
+        <button id="generate-btn">Generate</button>
+    </div>
+    <div id="result" class="result-box" style="display:none;"></div>
+</main>
+
+
+<footer>
+    <div class="container footer-content">
+        <p>&copy; 2025 Crafted. All rights reserved.</p>
+        <nav class="footer-nav">
+            <a href="/">Home</a>
+            
+            <a href="/write">Create</a>
+        </nav>
+    </div>
+</footer>
+
+<script>
+document.getElementById("generate-btn").addEventListener("click", async () => {
+  const topic = document.getElementById("topic").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  if (!topic) return alert("Please enter a topic first!");
+
+  resultDiv.style.display = "block";
+  resultDiv.innerHTML = "<p>✨ Generating your blog...</p>";
+
+  try {
+    const token = localStorage.getItem('access_token'); 
+
+    if (!token) {
+      alert("You must be logged in to generate a blog.");
+      return;
+    }
+
+    const res = await axios.post("/api/posts/ai-generate/",
+      { topic },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const { title, content } = res.data;
+    const sections = content.split(/\n\s*\n/);
+
+    let html = `<div class="generated-blog"><h2 class="blog-title">${marked.parseInline(title)}</h2>`;
+
+    sections.forEach(sec => {
+      html += `<div class="blog-section">${marked.parse(sec)}</div>`;
+    });
+
+    html += `</div>`;
+    resultDiv.innerHTML = html;
+
+  } catch (err) {
+    console.error(err);
+    resultDiv.innerHTML = "<p>❌ Failed to generate blog. Please try again.</p>";
+  }
+});
+
+</script>
+
+
+
+</body>
+</html>

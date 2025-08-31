@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Blog | Crafted</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+   
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f111a;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+   
+    nav {
+      background: #1a1c28;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    nav .nav-container {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #8a2be2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    nav .links a {
+      margin-left: 1.5rem;
+      font-weight: 600;
+      color: #ccc;
+      transition: 0.3s;
+    }
+
+    nav .links a:hover {
+      color: #fff;
+    }
+
+ 
+    header {
+      text-align: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(135deg, #6a0dad, #8a2be2);
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+ 
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: auto;
+      padding: 0 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+   
+    input,
+    textarea,
+    select {
+      width: 100%;
+      margin-top: 15px;
+      padding: 0.9rem 1rem;
+      border-radius: 0.75rem;
+      border: none;
+      background: #1c1f2a;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      box-shadow: 0 0 10px #6a0dad;
+    }
+
+   
+    .section-box {
+      background: #1a1c28;
+      border-radius: 1rem;
+      padding: 1rem 1.5rem;
+      position: relative;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .section-box h3 {
+      margin-top: 50;
+      color: #61dafb;
+    }
+
+    .remove-section {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      background: #e53935;
+      padding: 0.3rem 0.6rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .remove-section:hover {
+      background: #ff6666;
+      transform: scale(1.1);
+    }
+
+  
+    button#add-section-btn,
+    button#submit-btn {
+      background: linear-gradient(135deg, #6a0dad, #8a2be2);
+      color: #fff;
+      font-weight: 600;
+      size: 30px;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      transition: 0.3s;
+    }
+
+    button#add-section-btn:hover,
+    button#submit-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+    }
+
+   
+    label {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    
+    .tags-input,
+    .image-input {
+      margin-bottom: 1rem;
+    }
+
+    
+    @media(max-width:600px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      header p {
+        font-size: 1rem;
+      }
+    }
+
+  
+    footer {
+      background: #1F2937;
+      padding: 1.5rem 0;
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 2rem;
+      border-radius: 1rem 1rem 0 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <div class="logo"><span class="material-symbols-outlined">auto_awesome</span> Crafted</div>
+      <div class="links">
+        <a href="/">Home</a>
+        
+        <a href="/write">Write</a>
+        <a href="/ai-generate" class="btn-ai">Create with AI</a>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <h1>Create Your Blog</h1>
+    <p>Structured, clean, and ready for Crafted Showcase.</p>
+  </header>
+
+  <main>
+    <form id="blog-form">
+      <div>
+        <label>Blog Title</label>
+        <input type="text" id="blog-title" placeholder="Enter blog title">
+      </div>
+      <div>
+        <label>Blog Description</label>
+        <textarea id="blog-desc" rows="3" placeholder="Enter blog description"></textarea>
+      </div>
+
+      <h2>Sections</h2>
+      <div id="sections-container"></div>
+      <button type="button" id="add-section-btn">+ Add Section</button>
+
+      <div>
+        <label>Tags (comma separated)</label>
+        <input type="text" class="tags-input" placeholder="ai, tech, programming">
+      </div>
+      <div>
+  <label>Post Type</label>
+  <select id="post-type">
+    <option value="blog" selected>Blog</option>
+    <option value="project">Project</option>
+  </select>
+</div>
+
+      <div>
+        <label>Cover Image</label>
+        <input type="file" class="image-input" accept="image/*">
+      </div>
+
+      <button type="button" id="submit-btn">Submit Blog</button>
+    </form>
+  </main>
+
+  <footer>&copy; 2025 Crafted</footer>
+
+<script>
+  const sectionsContainer = document.getElementById('sections-container');
+const addSectionBtn = document.getElementById('add-section-btn');
+let sectionCount = 0;
+
+function createSection(title = '', description = '') {
+  sectionCount++;
+  const div = document.createElement('div');
+  div.className = 'section-box';
+  div.innerHTML = `
+    <h3>Section ${sectionCount}</h3>
+    <div class="section-inputs">
+      <input type="text" class="section-title-input" placeholder="Section title" value="${title}">
+      <textarea class="section-desc-input" placeholder="Section description" rows="3">${description}</textarea>
+    </div>
+    <button type="button" class="remove-section">Remove</button>
+  `;
+
+  div.querySelector('.remove-section').addEventListener('click', () => {
+    div.remove();
+    updateSectionNumbers();
+  });
+
+  sectionsContainer.appendChild(div);
+}
+
+function updateSectionNumbers() {
+  sectionCount = 0;
+  document.querySelectorAll('#sections-container .section-box').forEach((sec) => {
+    sectionCount++;
+    sec.querySelector('h3').innerText = `Section ${sectionCount}`;
+  });
+}
+
+addSectionBtn.addEventListener('click', () => createSection());
+
+createSection();
+
+document.getElementById('submit-btn').addEventListener('click', async () => {
+  const blogTitle = document.getElementById('blog-title').value.trim();
+  const blogDesc = document.getElementById('blog-desc').value.trim();
+  const tags = document.querySelector('.tags-input').value.trim();
+  const imageInput = document.querySelector('.image-input').files[0];
+  const postType = document.getElementById('post-type').value;
+
+  const sections = [];
+  document.querySelectorAll('#sections-container .section-box').forEach((sec, idx) => {
+    const section_title = sec.querySelector('.section-title-input').value.trim();
+    const section_content = sec.querySelector('.section-desc-input').value.trim();
+    if (section_title && section_content) {
+      sections.push({
+        order: idx + 1,
+        section_title,
+        section_content
+      });
+    }
+  });
+
+  if (!blogTitle || !blogDesc || sections.length === 0) {
+    alert("Please fill title, description, and at least one section!");
+    return;
+  }
+
+  const token = localStorage.getItem('access_token');
+  if (!token) {
+    alert("You must be logged in to create a blog!");
+    return;
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('title', blogTitle);
+    formData.append('description', blogDesc);
+    formData.append('tags', tags);
+    formData.append('post_type', postType);
+    if (imageInput) formData.append('image', imageInput);
+    formData.append('sections', JSON.stringify(sections));
+
+    const res = await axios.post('/api/posts/create/', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    alert('Blog submitted successfully!');
+    window.location.href = `/post/${res.data.id}/`;
+  } catch (err) {
+    console.error(err.response || err);
+    alert('Error submitting blog. Check console.');
+  }
+});
+
+</script>
+
+
+</body>
+
+</html>

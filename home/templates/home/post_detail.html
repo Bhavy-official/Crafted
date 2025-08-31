@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Post Details</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+<style>
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+body.dark-mode {
+  background: #121212;
+  color: #f5f5f5;
+}
+
+body.dark-mode .container {
+  background: #1f1f1f;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode h1,
+body.dark-mode .meta-info span,
+body.dark-mode .section-card h3 {
+  color: #f5f5f5;
+}
+
+body.dark-mode .like-btn,
+body.dark-mode #add-comment-btn {
+  background: #007bff;
+}
+
+body.dark-mode .comment strong {
+  color: #007bff;
+}
+
+body.dark-mode #comment-input {
+  background: #333;
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+body.dark-mode #comment-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+body.dark-mode .like-btn:hover {
+  background: #0056b3;
+}
+
+body.dark-mode #add-comment-btn:hover {
+  background: #1e7e34;
+}
+
+
+nav {
+    position: sticky;
+    top: 0;
+    background-color: #1F2937;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 50;
+}
+.nav-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+}
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+.nav-links a:hover {
+    color: #611bf8;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1 {
+    margin-bottom: 16px;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.meta-info {
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+.meta-info span { font-weight: 500; }
+
+.section-card {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border-left: 6px solid #007bff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.section-card h3 {
+    margin-top: 0;
+    font-size: 1.6rem;
+    color: #007bff;
+    margin-bottom: 12px;
+}
+
+.section-card p {
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.section-card pre {
+    background: #272822;
+    color: #f8f8f2;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 16px;
+}
+
+.section-card code {
+    font-family: 'Courier New', monospace;
+}
+
+.like-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.like-btn {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.3s, transform 0.2s;
+}
+.like-btn:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.comments {
+    border-top: 1px solid #ddd;
+    padding-top: 24px;
+}
+
+.comments h3 {
+    margin-bottom: 16px;
+    font-size: 1.4rem;
+    color: #222;
+}
+
+.comment {
+    border-bottom: 1px solid #eee;
+    padding: 12px 0;
+    font-size: 15px;
+    display: flex;
+    gap: 8px;
+}
+
+.comment strong {
+    color: #007bff;
+}
+
+#comment-input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: none;
+    font-family: inherit;
+    font-size: 15px;
+}
+#comment-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0,123,255,0.2);
+}
+
+#add-comment-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s, transform 0.2s;
+}
+#add-comment-btn:hover {
+    background: #1e7e34;
+    transform: scale(1.05);
+}
+
+@media(max-width: 600px) {
+    .container { margin: 20px; padding: 20px; }
+    h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="post-title"></h1>
+    <img id="post-image" class="post-image" src="" alt="">
+    <div class="meta-info">
+        Author: <span id="post-author"></span> | Tags: <span id="post-tags"></span>
+    </div>
+
+    <div id="post-content"></div>
+
+    <div class="like-section">
+        <span>Likes: <span id="likes-count"></span></span>
+        <button class="like-btn" id="like-btn">Like<span class="material-symbols-outlined">thumb_up</span></button>
+    </div>
+
+    <div class="comments">
+        <h3>Comments</h3>
+        <div id="comments-list"></div>
+        <textarea id="comment-input" placeholder="Add a comment..." rows="3"></textarea><br>
+        <button id="add-comment-btn">Add Comment</button>
+    </div>
+</div>
+
+<script>
+const postId = "{{ post_id }}";
+const postTitle = document.getElementById('post-title');
+const postImage = document.getElementById('post-image');
+const postContent = document.getElementById('post-content');
+const postAuthor = document.getElementById('post-author');
+const postTags = document.getElementById('post-tags');
+const likesCount = document.getElementById('likes-count');
+const likeBtn = document.getElementById('like-btn');
+const commentsList = document.getElementById('comments-list');
+const commentInput = document.getElementById('comment-input');
+const addCommentBtn = document.getElementById('add-comment-btn');
+
+// Create axios instance with JWT token handling
+const authAxios = axios.create();
+
+authAxios.interceptors.request.use(config => {
+  const accessToken = localStorage.getItem("access_token");
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+authAxios.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
+
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (refreshToken) {
+        try {
+          const res = await axios.post('/api/refresh/', { refresh: refreshToken });
+          const newAccessToken = res.data.access;
+          localStorage.setItem("access_token", newAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return authAxios(originalRequest);
+        } catch (refreshError) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          window.location.href = '/login';
+          return Promise.reject(refreshError);
+        }
+      } else {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+function renderSectionContent(content) {
+  let html = content
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+    .replace(/```(.*?)```/gims, function(match, p1) {
+      return '<pre><code>' + p1.trim() + '</code></pre>';
+    })
+    .replace(/\n\n/g, '</p><p>');
+  return '<p>' + html + '</p>';
+}
+
+function renderComments(comments) {
+  commentsList.innerHTML = "";
+  comments.forEach(c => {
+    commentsList.innerHTML += `<div class="comment"><strong>${c.author_name}</strong>: ${c.content}</div>`;
+  });
+}
+
+async function fetchPost() {
+  try {
+    const res = await authAxios.get(`/api/posts/${postId}/`);
+    const post = res.data;
+
+    postTitle.textContent = post.title;
+    postImage.src = post.image || "/media/post_images/default.png";
+    postAuthor.textContent = post.author_name;
+    postTags.textContent = post.tags;
+    likesCount.textContent = post.likes_count || 0;
+
+    postContent.innerHTML = "";
+
+    if (post.sections && post.sections.length > 0) {
+      post.sections.forEach(sec => {
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'section-card';
+
+        const secTitle = document.createElement('h3');
+        secTitle.textContent = sec.section_title;
+
+        const secDesc = document.createElement('div');
+        secDesc.innerHTML = renderSectionContent(sec.section_content);
+
+        sectionDiv.appendChild(secTitle);
+        sectionDiv.appendChild(secDesc);
+        postContent.appendChild(sectionDiv);
+      });
+    } else if (post.content) {
+      const sectionDiv = document.createElement('div');
+      sectionDiv.className = 'section-card';
+      sectionDiv.innerHTML = renderSectionContent(post.content);
+      postContent.appendChild(sectionDiv);
+    }
+
+    renderComments(post.comments || []);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+addCommentBtn.addEventListener('click', async () => {
+  const content = commentInput.value.trim();
+  if (!content) return alert("Enter a comment!");
+
+  try {
+    await authAxios.post(`/api/posts/${postId}/comments/`, { content });
+    commentInput.value = "";
+    fetchPost();
+  } catch (err) {
+    console.error(err);
+    alert("Login required!");
+  }
+});
+
+likeBtn.addEventListener('click', async () => {
+  try {
+    await authAxios.post(`/api/posts/${postId}/like/`);
+    fetchPost();
+  } catch (err) {
+    console.error(err);
+    alert("Login required!");
+  }
+});
+
+fetchPost();
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const body = document.body;
+
+darkModeToggle.addEventListener('click', () => {
+  body.classList.toggle('dark-mode');
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('darkMode', 'enabled');
+  } else {
+    localStorage.setItem('darkMode', 'disabled');
+  }
+});
+
+if (localStorage.getItem('darkMode') === 'enabled') {
+  body.classList.add('dark-mode');
+}
+
+
+
+</script>
+
+
+</body>
+</html>

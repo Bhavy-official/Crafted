@@ -1,0 +1,22 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Environment files
+.env
+
+# SQLite database files
+db.sqlite
+
+# Django migration files (optional)
+*.log
+*.sqlite3
+*.pyc
+*.pyo
+__pycache__/
+
+# IDE/editor settings (optional)
+.vscode/
+.idea/
+venv/
