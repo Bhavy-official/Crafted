@@ -336,7 +336,9 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
   const token = localStorage.getItem('access_token');
   if (!token) {
     alert("You must be logged in to create a blog!");
-    return;
+    window.location.href = '/login';
+  return;
+  
   }
 
   try {

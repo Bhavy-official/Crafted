@@ -340,6 +340,7 @@ document.getElementById("generate-btn").addEventListener("click", async () => {
 
     if (!token) {
       alert("You must be logged in to generate a blog.");
+      window.location.href = '/login';
       return;
     }
 
