@@ -5,6 +5,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Crafted Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -180,15 +181,35 @@ nav .links {
 }
 
 #hamburger {
+  font-family: 'Material Symbols Rounded';
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 48;
+  user-select: none;
   display: none;
-  font-size: 2rem;
+  font-size: 2.5rem;
   cursor: pointer;
+  color: var(--nav-text);
 }
+
 
 @media (max-width: 768px) {
 
-  nav .links-container {
-    display: none; 
+ nav .links-container {
+    position: fixed;
+    top: 0;
+    right: -250px;
+    height: 100vh;
+    width: 250px;
+    background: var(--nav-bg);
+    box-shadow: -2px 0 6px rgba(0,0,0,0.2);
+    flex-direction: column;
+    padding: 2rem 1rem;
+    transition: right 0.3s ease;
+    z-index: 100;
+    display: flex;
   }
 
   #hamburger {
@@ -196,10 +217,8 @@ nav .links {
   }
 
   nav .links {
-    display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 1.5rem;
   }
 
   nav .links a {
@@ -211,8 +230,9 @@ nav .links {
 }
 
 nav.open .links-container {
-  display: block; 
-}
+    right: 0; 
+  }
+
 
 nav.open #hamburger {
   display: none;  
@@ -222,7 +242,13 @@ nav.open .links a {
   background-color: var(--nav-bg);
   color: var(--nav-link-hover);
   transition: background-color 0.3s ease;
+    nav .links a {
+    padding: 1rem;
+    font-size: 1.2rem;
+    color: var(--nav-link-color);
+  }
 }
+
 
 #dark-mode-toggle {
   margin-left: 1.5rem;
@@ -679,9 +705,11 @@ footer .social-links a:hover i {
     <button id="dark-mode-toggle" title="Toggle Dark Mode">
       <i id="dark-mode-icon" class="fas fa-sun"></i>
     </button>
-    <div id="hamburger" class="hamburger">
-      <span class="material-symbols-outlined">menu</span>
-    </div>
+    
+<div id="hamburger" class="hamburger">
+  <span class="material-symbols-rounded">menu</span>
+</div>
+
   </div>
 </nav>
 
@@ -969,7 +997,26 @@ const hamburger = document.getElementById('hamburger');
 
 hamburger.addEventListener('click', () => {
   nav.classList.toggle('open');
-})
+  const icon = hamburger.querySelector('.material-symbols-outlined');
+  if (nav.classList.contains('open')) {
+    icon.textContent = 'close'; 
+  } else {
+    icon.textContent = 'menu'; 
+  }
+});
+
+
+document.addEventListener('click', (event) => {
+  const isClickInsideMenu = nav.querySelector('.links-container').contains(event.target);
+  const isClickOnHamburger = hamburger.contains(event.target);
+
+  if (nav.classList.contains('open') && !isClickInsideMenu && !isClickOnHamburger) {
+    nav.classList.remove('open');
+  
+    const icon = hamburger.querySelector('.material-symbols-rounded');
+    icon.textContent = 'menu';
+  }
+});
 
 </script>
 
